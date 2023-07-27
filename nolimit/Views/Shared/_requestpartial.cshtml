@@ -1,0 +1,50 @@
+﻿@model Request
+
+@{
+    ViewData["Title"] = "Create";
+    var successMessage = TempData["SuccessMessage"] as string;
+}
+
+<h2 class="mt-4">Request Form  @ViewBag.UserId</h2>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+
+<form asp-controller="VehicleRequest" asp-action="create" method="post">
+    <div class="mb-3">
+        <label for="departmentInput" class="form-label">Department</label>
+        <input type="text" class="form-control" id="departmentInput" name="Department" asp-for="Department" placeholder="Enter Department" required>
+    </div>
+
+    
+
+    <div class="mb-3">
+        <label for="contactNoInput" class="form-label">Contact No</label>
+        <input type="text" class="form-control" id="contactNoInput" name="ContactNo" asp-for="ContactNo" required>
+    </div>
+    <div class="mb-3">
+        <label for="approvedByInput" class="form-label">Approved By</label>
+        <input type="text" class="form-control" id="approvedByInput" name="ApprovedBy" asp-for="ApprovedBy" required>
+    </div>
+    <div class="mb-3">
+        <label for="locationInput" class="form-label">Location to be visited</label>
+        <input type="text" class="form-control" id="locationInput" name="Location" asp-for="Location" required>
+    </div>
+    <div class="mb-3">
+        <label for="purposeInput" class="form-label">Purpose Of Visit</label>
+        <input type="text" class="form-control" id="purposeInput" name="Purpose" asp-for="Purpose" required>
+    </div>
+    <div class="mb-3">
+        <label for="passengersInput" class="form-label">Number of passengers</label>
+        <input type="number" class="form-control" id="passengersInput" name="Passengers" asp-for="Passengers" required>
+    </div>
+    <div class="mb-3">
+        <label for="datetimeInput" class="form-label">Time and Date</label>
+        <input type="datetime-local" class="form-control" id="datetimeInput" name="DateTime" asp-for="DateTime" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+</form>

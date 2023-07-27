@@ -1,0 +1,263 @@
+﻿@model MaintenanceViewModel
+@{
+    ViewData["Title"] = "Maintenance";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maintenance and Accidents</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+    <title>Driver List - Fleet Management System</title>
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+
+        body {
+            margin-top: 100px;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .maintenance-status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-in-progress {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .status-completed {
+            background-color: #28a745;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Maintenance and Accidents</h1>
+
+        <!-- Request Maintenance Form -->
+        <div class="card">
+            <div class="card-header">
+                Request Maintenance
+            </div>
+            <div class="card-body">
+                <form method="post" action="@Url.Action("SubmitMaintenanceRequest", "VehicleMaintenance")">
+                    <div class="form-group">
+                        <label for="vehicle">Vehicle:</label>
+                        <select class="form-control" id="vehicle" name="vehicleId" required>
+                            @if (Model.AvailableVehicles != null)
+                            {
+                                foreach (var vehicle in Model.AvailableVehicles)
+                                {
+                                    <option value="@vehicle.Id">@vehicle.LicensePlateNumber</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="details" rows="3" placeholder="Enter maintenance description" required></textarea>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="accident" name="accident" value="true">
+                        <label class="form-check-label" for="accident">Accident</label>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Existing Maintenance Requests -->
+        <div class="mt-4">
+            <h2>Existing Maintenance Requests</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Vehicle</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var maintenance in Model.VehicleMaintenances.Where(m => m.Status != "Completed" && m.Status != "Rejected"))
+                    {
+                        <tr>
+                            <td>@maintenance.Id</td>
+                            <td>@maintenance.VehicleId</td>
+                            <td>@maintenance.Detail</td>
+                            <td><span class="maintenance-status status-@maintenance.Status.ToLower()">@maintenance.Status</span></td>
+                            <td>
+                                @if (maintenance.Status == "Pending")
+                                {
+                                    <button type="button" class="btn btn-sm btn-success allocate-driver-btn" data-toggle="modal" data-target="#allocateDriverModal" data-maintenanceid="@maintenance.Id">Allocate Driver</button>
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#rejectMaintenanceModal">Reject</button>
+                                }
+                                else if (maintenance.Status == "Started")
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary end-maintenance-btn" data-toggle="modal" data-target="#endMaintenanceModal" data-maintenanceid="@maintenance.Id">End Maintenance</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- End Maintenance Modal -->
+        <div class="modal fade" id="endMaintenanceModal" tabindex="-1" role="dialog" aria-labelledby="endMaintenanceModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="endMaintenanceModalLabel">End Maintenance</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="@Url.Action("EndMaintenance", "VehicleMaintenance")" id="endMaintenanceForm" enctype="multipart/form-data">
+                            <input type="hidden" name="maintenanceId" id="maintenanceId" value="" />
+
+                            <!-- Rest of the form content -->
+                            <div class="form-group">
+                                <label for="meterReading">Meter Reading:</label>
+                                <input type="number" class="form-control" id="meterReading" name="meterReading" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fuelReading">Fuel Reading:</label>
+                                <input type="number" class="form-control" id="fuelReading" name="fuelReading" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cost">Cost:</label>
+                                <input type="number" class="form-control" id="cost" name="cost" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="image">Image:</label>
+                                <input type="file" class="form-control-file" id="image" name="image">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">End Maintenance</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('.allocate-driver-btn').click(function () {
+                    var maintenanceId = $(this).data('maintenanceid');
+                    $('#allocateDriverModal #maintenanceId').val(maintenanceId);
+                });
+
+                $('.end-maintenance-btn').click(function () {
+                    var maintenanceId = $(this).data('maintenanceid');
+                    $('#endMaintenanceModal #maintenanceId').val(maintenanceId);
+                });
+            });
+
+        </script>
+
+
+        <!-- Allocate Driver Modal -->
+        <div class="modal fade" id="allocateDriverModal" tabindex="-1" role="dialog" aria-labelledby="allocateDriverModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="allocateDriverModalLabel">Allocate Driver</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="@Url.Action("StartMaintenance", "VehicleMaintenance", new { maintenanceId = "" })" id="allocateDriverForm">
+                            <input type="hidden" name="maintenanceId" id="maintenanceId" value="" />
+                            <div class="form-group">
+                                <label for="driver">Driver:</label>
+                                <select class="form-control" id="driver" name="driverId">
+                                    @foreach (var driver in Model.AvailableDrivers)
+                                    {
+                                        <option value="@driver.Id">@driver.FirstName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Allocate</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Reject Maintenance Modal -->
+        <div class="modal fade" id="rejectMaintenanceModal" tabindex="-1" role="dialog" aria-labelledby="rejectMaintenanceModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectMaintenanceModalLabel">Reject Maintenance Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to reject this maintenance request?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        @if (Model.VehicleMaintenances.Any(m => m.Status == "Pending"))
+                        {
+                            var pendingMaintenance = Model.VehicleMaintenances.FirstOrDefault(m => m.Status == "Pending");
+                            <form method="post" action="@Url.Action("RejectMaintenanceRequest", "VehicleMaintenance")">
+                                <input type="hidden" name="maintenanceRequestId" value="@pendingMaintenance.Id" />
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+       
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

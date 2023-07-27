@@ -1,0 +1,178 @@
+﻿
+@{
+    ViewData["Title"] = "Reports";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+
+    <!-- Bootstrap CSS -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+       
+        body {
+            margin-top: 100px;
+        }
+    
+        .highlight-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+            .highlight-link:hover,
+            .highlight-link:focus {
+                color: blue !important;
+                text-decoration: none;
+            }
+    </style>
+
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Report Genaration </h1>
+        <div class="row">
+            <div class="col-sm-6 mb-4">
+                <div class="card">
+                    <h5 class="card-header">Vehicles: </h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="@Url.ActionLink("GenerateVehicleListReport", "Reports")" class="highlight-link">
+                                    <h5 class="card-title">Vehicle List</h5>
+                                    <p class="card-text">List all basic vehicle information.</p>
+                                </a>
+                            </li>
+                          
+                        </ul>
+                    </div>
+                </div>
+            </div>
+         
+
+            <div class="col-sm-6 mb-4">
+                <div class="card">
+                    <h5 class="card-header">Vehicle Allocation :</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateAllocationReport", "Reports", new { reportType = "day" })" class="highlight-link">
+                                    <h5 class="card-title">Daily Allocation Log</h5>
+                                    <p class="card-text">Listing of vehicle-to-contact assignment details for the current day.</p>
+                                </a>
+                            </li>
+
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateAllocationReport", "Reports", new { reportType = "week" })" class="highlight-link">
+                                    <h5 class="card-title">Weekly Allocation Log</h5>
+                                    <p class="card-text">Listing of vehicle-to-contact assignment details for the current week.</p>
+                                </a>
+                            </li>
+
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateAllocationReport", "Reports", new { reportType = "month" })" class="highlight-link">
+                                    <h5 class="card-title">Monthly Allocation Log</h5>
+                                    <p class="card-text">Listing of vehicle-to-contact assignment details for the current month.</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 mb-4">
+                <div class="card">
+                    <h5 class="card-header">Fuel :</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateFuelTableReport", "Reports", new { reportType = "day" })" class="highlight-link">
+                                    <h5 class="card-title">Daily Fuel Summary Report</h5>
+                                    <p class="card-text">Summary of fuel consumption details for the current day.</p>
+                                </a>
+                            </li>
+
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateFuelTableReport", "Reports", new { reportType = "week" })" class="highlight-link">
+                                    <h5 class="card-title">Weekly Fuel Summary Report</h5>
+                                    <p class="card-text">Summary of fuel consumption details for the current week.</p>
+                                </a>
+                            </li>
+
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateFuelTableReport", "Reports", new { reportType = "month" })" class="highlight-link">
+                                    <h5 class="card-title">Monthly Fuel Summary Report</h5>
+                                    <p class="card-text">Summary of fuel consumption details for the current month.</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 mb-4">
+                <div class="card">
+                    <h5 class="card-header">Driver :</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="@Url.ActionLink("GenerateDriverListReport", "Reports")" class="highlight-link">
+                                    <h5 class="card-title">Driver List</h5>
+                                    <p class="card-text">Listing of all Drivers with basic details.</p>
+                                </a>
+                            </li>
+                            
+                           
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 mb-4">
+                <div class="card">
+                    <h5 class="card-header">Maintenance Summery Report :</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateFuelTableReport", "Reports", new { reportType = "week" })" class="highlight-link">
+                                    <h5 class="card-title">Weekly Maintanence Summary Report</h5>
+                                    <p class="card-text">Summary of Maintanence details for the current week.</p>
+                                </a>
+                            </li>
+
+                            <li class="list-group-item">
+                                <a href="@Url.Action("GenerateFuelTableReport", "Reports", new { reportType = "month" })" class="highlight-link">
+                                    <h5 class="card-title">Monthly Maintanence Summary Report</h5>
+                                    <p class="card-text">Summary of Maintanence details for the current month.</p>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+</body>
+
+</html>
+
+
+

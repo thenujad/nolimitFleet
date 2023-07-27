@@ -1,0 +1,129 @@
+﻿@model AllocationViewModel
+
+@{
+    ViewData["Title"] = "Allocation Control Panel";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            margin-top: 100px;
+        }
+    </style>
+    <script>
+        function toggleActive(event, allocationId) {
+            // Remove 'active' class from all list items
+            const listItems = document.querySelectorAll('.list-group-item');
+            listItems.forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add 'active' class to the clicked list item
+            const clickedItem = event.currentTarget;
+            clickedItem.classList.add('active');
+
+            // Remove 'required' attribute from all input elements
+            const inputElements = document.querySelectorAll("input[data-allocation-id]");
+            inputElements.forEach(function (input) {
+                input.removeAttribute("required");
+            });
+
+            // Set 'required' attribute for the input elements in the clicked line
+            const meterReadingInput = clickedItem.querySelector(`input[name="MeterReading[${allocationId}]"]`);
+            const fuelReadingInput = clickedItem.querySelector(`input[name="FuelReading[${allocationId}]"]`);
+            meterReadingInput.setAttribute("required", "required");
+            fuelReadingInput.setAttribute("required", "required");
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Allocation Control Panel</h1>
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.SuccessMessage
+        </div>
+    }
+    <h2>Upcoming Trips</h2>
+    @foreach (var allocation in Model.Allocations.Where(a => a.Status == "Allocated"))
+    {
+        <form class="row g-3" method="post" action="@Url.Action("Start", "Allocation", new { allocationId = allocation.Id })">
+
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" onclick="toggleActive(event, @allocation.Id)">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Request ID: @allocation.RequestId</h5>
+                    </div>
+                    <p class="mb-1">Allocation Id: @allocation.Id</p>
+                    <p class="mb-1">Location: @allocation.Request.Location</p>
+                    <p class="mb-1">Purpose: @allocation.Request.Purpose</p>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <input type="number" class="form-control mr-2" name="MeterReading[@allocation.Id]" placeholder="Meter Reading" data-allocation-id="@allocation.Id">
+                        <input type="number" class="form-control mr-2" name="FuelReading[@allocation.Id]" placeholder="Fuel Reading" data-allocation-id="@allocation.Id">
+
+                        <input type="hidden" name="allocationId" value="@allocation.Id" />
+                        <button class="btn btn-sm btn-primary" type="submit">Start</button>
+                  
+
+                    </div>
+                </a>
+            </div>
+        </form>
+    }
+
+    <h2>On Road Trips</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Allocation ID</th>
+                <th>Location</th>
+                <th>Purpose</th>
+                <th>Meter Reading</th>
+                <th>Fuel Reading</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var allocation in Model.Allocations.Where(a => a.Status == "Started"))
+            {
+                <form method="post" action="@Url.Action("Complete", "Allocation", new { allocationId = allocation.Id })">
+                <tr>
+                    <td>@allocation.RequestId</td>
+                    <td>@allocation.Id</td>
+                    <td>@allocation.Request.Location</td>
+                    <td>@allocation.Request.Purpose</td>
+                    <td>
+                        <input type="number" class="form-control" name="MeterReadingEnd" placeholder="Meter Reading" data-allocation-id="@allocation.Id" required>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="FuelAmountEnd" placeholder="Fuel Reading" data-allocation-id="@allocation.Id" required>
+                    </td>
+                    <td>
+                      
+                            <input type="hidden" name="allocationId" value="@allocation.Id" />
+                            <button class="btn btn-sm btn-primary" type="submit">End</button>
+                       
+                    </td>
+                </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+
+
+
+
+</body>
+</html>

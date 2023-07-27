@@ -1,0 +1,80 @@
+﻿@model Driver
+
+@{
+    ViewData["Title"] = "Edit Driver";
+}
+
+<h2>Edit Driver</h2>
+
+<form asp-controller="Driver" asp-action="EditDriver" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="FirstName">First Name:</label>
+        <input class="form-control" asp-for="FirstName" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Last Name:</label>
+        <input class="form-control" asp-for="LastName" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DateOfBirth">Date of Birth:</label>
+        <input class="form-control" asp-for="DateOfBirth" type="date" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Gender">Gender:</label>
+        <input class="form-control" asp-for="Gender" />
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ContactNumber">Contact Number:</label>
+        <input class="form-control" asp-for="ContactNumber" />
+        <span asp-validation-for="ContactNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EmailAddress">Email Address:</label>
+        <input class="form-control" asp-for="EmailAddress" />
+        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LicenseNumber">License Number:</label>
+        <input class="form-control" asp-for="LicenseNumber" />
+        <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LicenseExpirationDate">License Expiration Date:</label>
+        <input class="form-control" asp-for="LicenseExpirationDate" type="date" />
+        <span asp-validation-for="LicenseExpirationDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address">Address:</label>
+        <input class="form-control" asp-for="Address" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="City">City:</label>
+        <input class="form-control" asp-for="City" />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="State">State:</label>
+        <input class="form-control" asp-for="State" />
+        <span asp-validation-for="State" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ZipCode">Zip Code:</label>
+        <input class="form-control" asp-for="ZipCode" />
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Country">Country:</label>
+        <input class="form-control" asp-for="Country" />
+        <span asp-validation-for="Country" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-controller="Driver" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,93 @@
+﻿@model List<Request>
+
+@{
+    ViewData["Title"] = "Pending Requests";
+}
+
+<h2>Pending Requests</h2>
+
+<div class="mb-3">
+    <label for="searchInput" class="form-label">Search:</label>
+    <input id="searchInput" type="text" class="form-control">
+    <button id="searchButton" type="button" class="btn btn-primary">Search</button>
+</div>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>User ID</th>
+                <th>Department</th>
+                <th>Contact No</th>
+                <th>Approved By</th>
+                <th>Location</th>
+                <th>Purpose</th>
+                <th>Passengers</th>
+                <th>Date and Time</th>
+                <th></th> <!-- Add a column for the buttons -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Id</td>
+                    <td>@request.UserId</td>
+                    <td>@request.Department</td>
+                    <td>@request.ContactNo</td>
+                    <td>@request.ApprovedBy</td>
+                    <td>@request.Location</td>
+                    <td>@request.Purpose</td>
+                    <td>@request.Passengers</td>
+                    <td>@request.DateTime</td>
+                    <td>
+                        @if (request.Status == "Pending")
+                        {
+                            <form method="post" action="@Url.Action("Approve", "VehicleRequest")">
+                                <input type="hidden" name="id" value="@request.Id" />
+                                <button type="submit" class="btn btn-primary">Approve</button>
+                            </form>
+                            <form method="post" action="@Url.Action("Reject", "VehicleRequest")">
+                                <input type="hidden" name="id" value="@request.Id" />
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No pending requests found.</p>
+}
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#searchButton').click(function () {
+                var searchText = $('#searchInput').val().trim().toLowerCase();
+
+                if (searchText.length > 0) {
+                    // Filter table rows based on the search text
+                    $('tbody tr').each(function () {
+                        var rowText = $(this).text().toLowerCase();
+
+                        if (rowText.indexOf(searchText) === -1) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        }
+                    });
+                } else {
+                    // Show all table rows if the search text is empty
+                    $('tbody tr').show();
+                }
+            });
+        });
+    </script>
+}

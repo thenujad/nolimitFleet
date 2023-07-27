@@ -1,0 +1,94 @@
+﻿@model AllocationViewModel
+
+@{
+    var allocationViewModel = ViewData["AllocationViewModel"] as AllocationViewModel;
+    var Requests = allocationViewModel?.Requests;
+    var drivers = allocationViewModel?.Drivers;
+    var vehicles = allocationViewModel?.Vehicles;
+}
+
+@{
+    ViewData["Title"] = "Fleet Operations Control Panel";
+}
+
+<h2>Allocation</h2>
+
+@if (Requests != null && Requests.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>User ID</th>
+                <th>Department</th>
+                <th>Contact No</th>
+                <th>Approved By</th>
+                <th>Location</th>
+                <th>Purpose</th>
+                <th>Passengers</th>
+                <th>Date and Time</th>
+                <th>Driver</th>
+                <th>Vehicle</th>
+                <th></th> <!-- Add a column for the buttons -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Requests)
+            {
+                <tr>
+                    <td>@request.Id</td>
+                    <td>@request.UserId</td>
+                    <td>@request.Department</td>
+                    <td>@request.ContactNo</td>
+                    <td>@request.ApprovedBy</td>
+                    <td>@request.Location</td>
+                    <td>@request.Purpose</td>
+                    <td>@request.Passengers</td>
+                    <td>@request.DateTime</td>
+                    <td>
+                        @if (request.Status == "Approved")
+                        {
+                            <form method="post" action="@Url.Action("Allocate", "VehicleRequest")">
+                                <input type="hidden" name="requestId" value="@request.Id" />
+                        <td>
+                            <select name="driverId" class="form-control">
+                                        @foreach (var driver in drivers)
+                                        {
+                                    <option value="@driver.Id">@driver.FirstName</option>
+                                        }
+                            </select>
+                        </td>
+                        <td>
+                            <select name="vehicleId" class="form-control">
+                                        @foreach (var vehicle in vehicles)
+                                        {
+                                    <option value="@vehicle.Id">@vehicle.LicensePlateNumber</option>
+                                        }
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Allocate</button>
+                        </td>
+                        </form>
+                        }
+                    </td>
+                    <td>
+                        @if (request.Status == "Approved")
+                        {
+                            <form method="post" action="@Url.Action("Cancel", "VehicleRequest")">
+                                <input type="hidden" name="requestId" value="@request.Id" />
+                        <td>
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </td>
+                        </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No approved requests found.</p>
+}

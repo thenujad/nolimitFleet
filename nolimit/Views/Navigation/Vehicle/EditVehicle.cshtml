@@ -1,0 +1,71 @@
+﻿@model Vehicle
+
+@{
+    ViewData["Title"] = "Edit Vehicle";
+}
+
+<h2>Edit Vehicle</h2>
+
+<form asp-controller="VehicleAdd" asp-action="EditVehicle" method="post">
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="form-group">
+        <label for="Brand">Brand:</label>
+        <input class="form-control" type="text" id="Brand" name="Brand" value="@Model.Brand" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="Model">Model:</label>
+        <input class="form-control" type="text" id="Model" name="Model" value="@Model.Model" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="Year">Year:</label>
+        <input class="form-control" type="number" id="Year" name="Year" value="@Model.Year" />
+        <!-- Add validation error messages if needed -->
+    </div>
+   
+    <div class="form-group">
+        <label for="VehicleType">Vehicle Type:</label>
+        <input class="form-control" type="text" id="VehicleType" name="VehicleType" value="@Model.VehicleType" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="FuelType">Fuel Type:</label>
+        <input class="form-control" type="text" id="FuelType" name="FuelType" value="@Model.FuelType" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="CurrentMileage">Current Mileage:</label>
+        <input class="form-control" type="number" id="CurrentMileage" name="CurrentMileage" value="@Model.CurrentMileage" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="OwnerName">Owner's Name:</label>
+        <input class="form-control" type="text" id="OwnerName" name="OwnerName" value="@Model.OwnerName" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="InsuranceProvider">Insurance Provider:</label>
+        <input class="form-control" type="text" id="InsuranceProvider" name="InsuranceProvider" value="@Model.InsuranceProvider" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="InsurancePolicyNumber">Insurance Policy Number:</label>
+        <input class="form-control" type="text" id="InsurancePolicyNumber" name="InsurancePolicyNumber" value="@Model.InsurancePolicyNumber" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="PolicyExpirationDate">Policy Expiration Date:</label>
+        <input class="form-control" type="date" id="PolicyExpirationDate" name="PolicyExpirationDate" value="@Model.PolicyExpirationDate?.ToString("yyyy-MM-dd")" />
+        <!-- Add validation error messages if needed -->
+    </div>
+    <div class="form-group">
+        <label for="FuelLevel">Fuel Level:</label>
+        <input class="form-control" type="text" id="FuelLevel" name="FuelLevel" value="@Model.FuelLevel" />
+        <!-- Add validation error messages if needed -->
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-controller="VehicleAdd" asp-action="EditVehicle" class="btn btn-secondary">Cancel</a>
+</form>

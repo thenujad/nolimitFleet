@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewData["Title"] = "Fleet_Operations_Control_Panel";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Combined Interface</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1>Fleet Operations Control Panel</h1>
+        <ul class="nav nav-tabs mt-4">
+            <li class="nav-item">
+                <a class="nav-link active" id="request-tab" data-bs-toggle="tab" href="#request-section">Submit Request</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="allocation-tab" data-bs-toggle="tab" href="#requests-section">Confirm Requests</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="allocation-tab" data-bs-toggle="tab" href="#allocation-section">Allocate Request</a>
+            </li>
+        </ul>
+        <div class="tab-content mt-3">
+            <!-- Request Form Section -->
+            <div class="tab-pane fade show active" id="request-section">
+                @Html.Partial("_requestpartial")
+            </div>
+            <!-- Allocation Management Section -->
+            <div class="tab-pane fade" id="requests-section">
+                @Html.Partial("_aproverequestspartial", ViewData["PendingRequests"])
+            </div>
+            <div class="tab-pane fade" id="allocation-section">
+                @Html.Partial("_allocationpartial", ViewData["AllocationViewModel"] as AllocationViewModel)
+            </div>
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>
+
+
+

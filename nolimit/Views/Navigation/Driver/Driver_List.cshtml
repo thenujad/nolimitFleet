@@ -1,0 +1,198 @@
+﻿@model IEnumerable<Driver>
+
+@{
+    ViewData["Title"] = "Driver List";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+    <title>Driver List - Fleet Management System</title>
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            margin-top: 100px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-6">
+                <h2>Driver List</h2>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-primary" asp-controller="Driver" asp-action="AddDriver">+ Add Driver</a>
+            </div>
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search drivers" id="searchInput">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="searchDrivers()">Search</button>
+            </div>
+        </div>
+
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>License Number</th>
+                    <th>Date Created</th>
+                    <th>Contact Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    @foreach (var obj in Model)
+                    {
+                        <tr>
+                            <td>@obj.FirstName</td>
+                            <td>@obj.LastName</td>
+                            <td>@obj.LicenseNumber</td>
+                            <td>@obj.DateCreated</td>
+                            <td>@obj.ContactNumber</td>
+                            <td>
+                            <td>
+                                <a class="btn btn-primary" asp-controller="Driver" asp-action="EditDriver" asp-route-id="@obj.Id">Edit</a>
+                                <button class="btn btn-danger" onclick="confirmDelete('@obj.Id')">Delete</button>
+                            </td>
+
+                            </td>
+                        </tr>
+                    }
+                    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel">Delete Driver</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this driver?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                    <button id="confirmDeleteButton" class="btn btn-danger">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function confirmDelete(driverId) {
+                            $('#confirmDeleteModal').modal('show'); // Show the delete confirmation modal
+
+                            // Bind the delete action to the "Yes" button in the modal
+                            $('#confirmDeleteButton').on('click', function () {
+                                $.ajax({
+                                    url: '/Driver/DeleteDriver?id=' + driverId,
+                                    type: 'DELETE',
+                                    success: function (result) {
+                                        // Handle the success response, e.g., refresh the driver list
+                                        // or perform any other desired action
+                                        location.reload(); // Refresh the page
+                                    },
+                                    error: function (xhr, status, error) {
+                                        // Handle the error response, e.g., display an error message
+                                        console.log(error);
+                                    }
+                                });
+                            });
+                        }
+                    </script>
+
+                }
+
+                else
+                {
+                    <tr>
+                        <td colspan="6">No drivers available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <script>
+            function searchDrivers() {
+                var input = document.getElementById('searchInput').value.toLowerCase();
+                var table = document.querySelector('.table');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < rows.length; i++) {
+                    var firstName = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+                    var lastName = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+
+                    if (firstName.includes(input) || lastName.includes(input)) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        </script>
+
+
+    <div class="container mt-4">
+      
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">On Road Drivers</h5>
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact Number</th>
+                                        <th>Licence Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <tbody>
+                                        @foreach (var driver in ViewBag.DriversOnRoad ?? new List<Driver>())
+                                        {
+                                        <tr>
+                                            <td>@(driver?.FirstName)</td>
+                                            <td>@(driver?.ContactNumber)</td>
+                                            <td>@(driver?.LicenseNumber)</td>
+                                        </tr>
+                                        }
+                                </tbody>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            
+    </div>
+
+
+   
+  
+</body>
+</html>
+

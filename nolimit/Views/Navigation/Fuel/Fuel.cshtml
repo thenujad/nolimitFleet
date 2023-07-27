@@ -1,0 +1,235 @@
+﻿@model FuelViewModel
+
+@{
+    ViewData["Title"] = "Fuel";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel History - nolimit</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/docs.css" rel="stylesheet">
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="container mt-5">
+        <main role="main" class="pb-3">
+
+           
+
+            <!-- Fuel Request -->
+            <div class="mt-5">
+                <h3>Fuel Request</h3>
+                <form method="post" action="@Url.Action("SubmitRequest", "Fuel")">
+                    <div class="mb-3">
+                        <label for="vehicleSelect">Select Vehicle:</label>
+                        <select class="form-select" id="vehicleSelect" name="vehicleId" required>
+                            <option value="">Choose...</option>
+                            @foreach (var vehicle in Model.Vehicles.Where(a => a.Availability == true))
+                            {
+                                <option value="@vehicle.Id">@vehicle.LicensePlateNumber</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="volumeInput" class="form-label">Volume</label>
+                        <input type="text" class="form-control" id="volumeInput" name="volume" placeholder="Enter volume (gallons)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="costInput" class="form-label">Budget</label>
+                        <input type="text" class="form-control" id="costInput" name="budget" placeholder="Enter budget ($)">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
+
+            <!-- Fuel Request Confirmation Table -->
+            <h3>Fuel Request Confirmation</h3>
+            @if (Model.FuelRequestHistory.Any(r => r.Status == "Pending"))
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Request Date</th>
+                            <th>Vehicle</th>
+                            <th>Volume (gallons)</th>
+                            <th>Budget ($)</th>
+                            <th>Assign Driver</th>
+                            <th>Reject</th> <!-- New column for reject button -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var request in Model.FuelRequestHistory.Where(r => r.Status == "Pending"))
+                        {
+                            <tr>
+                                <td>@request.RequestDate</td>
+                                <td>@request.Vehicle.LicensePlateNumber</td>
+                                <td>@request.Volume</td>
+                                <td>@request.Budget</td>
+                                <td>
+                                    <form method="post" action="@Url.Action("ConfirmRequest", "Fuel")">
+                                        <input type="hidden" name="requestId" value="@request.Id" />
+                                        <div class="mb-3">
+                                            <label for="driverSelect" class="form-label">Select Driver:</label>
+                                            <select class="form-select" id="driverSelect" name="driverId" required>
+                                                <option value="">Choose...</option>
+                                                @foreach (var driver in Model.Drivers.Where(a => a.Availability == true))
+                                                {
+                                                    <option value="@driver.Id">@driver.FirstName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Assign</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form method="post" action="@Url.Action("RejectRequest", "Fuel")">
+                                        <input type="hidden" name="requestId" value="@request.Id" />
+                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No pending fuel requests available.</p>
+            }
+
+
+
+            <!-- Refueling Entry Form -->
+            <h3>Refueling Entry</h3>
+
+            @using Microsoft.AspNetCore.Mvc.TagHelpers
+            <form method="post" action="@Url.Action("SubmitRefueling", "Fuel")" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label for="vehicleSelect" class="form-label">Select Vehicle:</label>
+                    <select class="form-select" id="vehicleSelect" name="vehicleId" required>
+                        <option value="">Choose...</option>
+                        @foreach (var fuel in Model.FuelHistory.Where(f => f.Status == "Fueling"))
+                        {
+                            <option value="@fuel.VehicleId">@fuel.Vehicle.LicensePlateNumber</option>
+                        }
+                    </select>
+                    @foreach (var fuel in Model.FuelHistory.Where(f => f.Status == "Fueling"))
+                    {
+                        <input type="hidden" name="fuelId" value="@fuel.Id" />
+                    }
+                </div>
+                <div class="mb-3">
+                    <label for="currentMeterReading" class="form-label">Current Meter Reading:</label>
+                    <input type="number" class="form-control" id="currentMeterReading" name="currentMeterReading" required>
+                </div>
+                <div class="mb-3">
+                    <label for="fuelReading" class="form-label">Fuel Reading:</label>
+                    <input type="number" class="form-control" id="fuelReading" name="fuelReading" required>
+                </div>
+                <div class="mb-3">
+                    <label for="volume" class="form-label">Volume (gallons):</label>
+                    <input type="number" class="form-control" id="volume" name="volume" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cost" class="form-label">Cost ($):</label>
+                    <input type="number" class="form-control" id="cost" name="cost" required>
+                </div>
+                <div class="mb-3">
+                    <label for="receipt" class="form-label">Receipt:</label>
+                    <input type="file" class="form-control" id="receipt" name="receipt">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+
+            <!-- Fuel History Page -->
+            <h3>Fuel History</h3>
+
+            <div class="mb-3">
+                <label for="searchInput" class="form-label">Search:</label>
+                <input id="searchInput" type="text" class="form-control">
+                <button id="searchButton" type="button" class="btn btn-primary">Search</button>
+            </div>
+
+            <table id="fuelHistoryTable" class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Vehicle</th>
+                        <th>Meter Reading</th>
+                        <th>Fuel Reading</th>
+                        <th>Volume</th>
+                        <th>Cost</th>
+                        <th>Receipt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fuelEntry in Model.FuelHistory.Where(f => f.Status == "Completed"))
+                    {
+                        <tr>
+                            <td>@fuelEntry.DateTime</td>
+                            <td>@fuelEntry.Vehicle.LicensePlateNumber</td>
+                            <td>@fuelEntry.MeterReading</td>
+                            <td>@fuelEntry.FuelReading</td>
+                            <td>@fuelEntry.Volume</td>
+                            <td>@fuelEntry.Cost</td>
+                            <td>
+                                @if (fuelEntry.ImageId != 0)
+                                {
+                                    <a href="@Url.Action("ViewReceipt", "Fuel", new { id = fuelEntry.Id })">View Receipt</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @section Scripts {
+                <script>
+                    $(document).ready(function () {
+                        $('#searchButton').click(function () {
+                            var searchText = $('#searchInput').val().trim().toLowerCase();
+
+                            if (searchText.length > 0) {
+                                // Filter table rows based on the search text
+                                $('#fuelHistoryTable tbody tr').each(function () {
+                                    var rowText = $(this).text().toLowerCase();
+
+                                    if (rowText.indexOf(searchText) === -1) {
+                                        $(this).hide();
+                                    } else {
+                                        $(this).show();
+                                    }
+                                });
+                            } else {
+                                // Show all table rows if the search text is empty
+                                $('#fuelHistoryTable tbody tr').show();
+                            }
+                        });
+                    });
+                </script>
+            }
+
+
+
+</body>
+
+</html>
